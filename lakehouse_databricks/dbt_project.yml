@@ -27,8 +27,6 @@ models:
   +use_safer_relation_operations: true
   +pre-hook: 
   +post-hook: 
-  +table_format: delta
-  +file_format: delta
   +access: public
   +persist_docs: 
     relation: true
@@ -36,5 +34,9 @@ models:
   lakehouse_databricks:
     silver_layer:
       +materialized: table
+      customers:
+        +schema: silver_customers
     gold_layer:
       +materialized: table
+      customers_kpis:
+        +schema: gold_customers
