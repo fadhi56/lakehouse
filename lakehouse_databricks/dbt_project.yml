@@ -1,0 +1,40 @@
+name: lakehouse_databricks
+
+profile: lakehouse_databricks
+
+seed-paths: ["seeds"]
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-paths: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+on-run-end:
+
+flags: 
+  use_materialization_v2: True
+  cache_selected_only: True
+
+seeds:
+  # Builds seeds into '<your_schema_name>_raw'
+  lakehouse_databricks:
+    +schema: raw
+
+models:
+  +use_safer_relation_operations: true
+  +pre-hook: 
+  +post-hook: 
+  +table_format: delta
+  +file_format: delta
+  +access: public
+  +persist_docs: 
+    relation: true
+    columns: true
+  lakehouse_databricks:
+    silver_layer:
+      +materialized: table
+    gold_layer:
+      +materialized: table
