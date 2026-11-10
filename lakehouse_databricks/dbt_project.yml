@@ -21,7 +21,7 @@ seeds:
   # Builds seeds into '<your_schema_name>_raw'
   lakehouse_databricks:
     customer:
-      +schema: bronze_customer
+      +schema: bronze_customers
 
 models:
   +use_safer_relation_operations: true
