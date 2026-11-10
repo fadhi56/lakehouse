@@ -1,0 +1,12 @@
+lakehouse_databricks:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      database: dev
+      schema: default
+      host: dbc-ed30dff3-c13c.cloud.databricks.com
+      http_path: /sql/1.0/warehouses/3b4dceb1004c6724
+      token: dapi5fda27f7080d832041f75b621085598c
+      auth_type: token
+      threads: 16
