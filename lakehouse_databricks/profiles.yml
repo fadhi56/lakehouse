@@ -1,0 +1,12 @@
+lakehouse_databricks:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      database: dev
+      schema: dbt
+      host: "{{ env_var('databricks_host')}}"
+      http_path: "{{ env_var('databricks_https')}}"
+      token: "{{ env_var('databricks_token')}}"
+      auth_type: token
+      threads: 16
