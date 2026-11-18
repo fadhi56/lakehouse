@@ -1,0 +1,50 @@
+
+name: Deploy Databricks Asset Bundle
+
+on:
+  workflow_dispatch:
+
+  # Enable after successful manual deployments:
+  # push:
+  #   branches:
+  #     - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: databricks-dev-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy-dev:
+    name: Validate and Deploy DEV
+    runs-on: ubuntu-latest
+
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_AUTH_TYPE: pat
+
+    defaults:
+      run:
+        working-directory: lakehouse_databricks
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Check Databricks Authentication
+        run: databricks current-user me
+
+      - name: Validate Databricks Bundle
+        run: databricks bundle validate -t dev
+
+      - name: Deploy Databricks Bundle
+        run: databricks bundle deploy -t dev
+
+      - name: Show Deployed Resources
+        run: databricks bundle summary -t dev
