@@ -1,24 +1,19 @@
-
 name: Deploy Databricks Asset Bundle
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - test
+      - main
 
-  # Enable after successful manual deployments:
-  # push:
-  #   branches:
-  #     - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: databricks-dev-deployment
-  cancel-in-progress: false
-
 jobs:
-  deploy-dev:
-    name: Validate and Deploy DEV
+  deploy:
+    name: Deploy Databricks Bundle
     runs-on: ubuntu-latest
 
     env:
@@ -31,34 +26,58 @@ jobs:
         working-directory: lakehouse_databricks
 
     steps:
+
+      # Step 1: Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Step 2: Install Databricks CLI
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Verify environment variables
+      # Step 3: Determine deployment target
+      - name: Set Deployment Target
+        id: target
+        shell: bash
         run: |
-          if [ -z "$DATABRICKS_HOST" ]; then
-            echo "ERROR: DATABRICKS_HOST is missing"
+          if [[ "$GITHUB_REF_NAME" == "test" ]]; then
+            echo "TARGET=dev" >> "$GITHUB_ENV"
+            echo "Deploying TEST branch to DEV"
+
+          elif [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            echo "TARGET=prod" >> "$GITHUB_ENV"
+            echo "Deploying MAIN branch to PROD"
+
+          else
+            echo "Unsupported branch: $GITHUB_REF_NAME"
             exit 1
           fi
 
-          if [ -z "$DATABRICKS_TOKEN" ]; then
-            echo "ERROR: DATABRICKS_TOKEN is missing"
+      # Step 4: Check environment variables
+      - name: Verify Environment Variables
+        run: |
+          test -n "$DATABRICKS_HOST" || {
+            echo "DATABRICKS_HOST missing"
             exit 1
-          fi
+          }
 
-          echo "Both variables are configured"
+          test -n "$DATABRICKS_TOKEN" || {
+            echo "DATABRICKS_TOKEN missing"
+            exit 1
+          }
 
+      # Step 5: Verify authentication
       - name: Check Databricks Authentication
         run: databricks current-user me
 
+      # Step 6: Validate bundle
       - name: Validate Databricks Bundle
-        run: databricks bundle validate -t dev
+        run: databricks bundle validate -t "$TARGET"
 
+      # Step 7: Deploy bundle
       - name: Deploy Databricks Bundle
-        run: databricks bundle deploy -t dev
+        run: databricks bundle deploy -t "$TARGET"
 
+      # Step 8: Show deployed resources
       - name: Show Deployed Resources
-        run: databricks bundle summary -t dev
+        run: databricks bundle summary -t "$TARGET"
