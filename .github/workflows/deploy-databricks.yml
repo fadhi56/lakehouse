@@ -37,6 +37,20 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
+      - name: Verify environment variables
+        run: |
+          if [ -z "$DATABRICKS_HOST" ]; then
+            echo "ERROR: DATABRICKS_HOST is missing"
+            exit 1
+          fi
+
+          if [ -z "$DATABRICKS_TOKEN" ]; then
+            echo "ERROR: DATABRICKS_TOKEN is missing"
+            exit 1
+          fi
+
+          echo "Both variables are configured"
+
       - name: Check Databricks Authentication
         run: databricks current-user me
 
