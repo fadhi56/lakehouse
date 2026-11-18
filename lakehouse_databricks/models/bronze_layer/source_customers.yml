@@ -1,0 +1,6 @@
+sources:
+  - name: bronze_customers
+    schema: bronze_customers
+    description: Table generated from the raw seed file
+    tables:
+      - name: customers
