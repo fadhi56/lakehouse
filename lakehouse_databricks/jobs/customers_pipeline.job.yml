@@ -1,0 +1,17 @@
+resources:
+  jobs:
+    customers_pipeline_job:
+      name: customers_pipeline_job_${bundle.target}
+
+      description: >
+        Execute the customer Lakeflow pipeline
+        from Bronze to Gold.
+
+      max_concurrent_runs: 1
+
+      tasks:
+        - task_key: run_customers_pipeline
+
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.customers_pipeline.id}
+            full_refresh: false

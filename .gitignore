@@ -1,0 +1,71 @@
+.logs
+.vscode
+.dbt
+# ==============================
+# Python virtual environments
+# ==============================
+.dbt/
+.venv/
+venv/
+env/
+
+# ==============================
+# Python cache files
+# ==============================
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# ==============================
+# Pytest and coverage
+# ==============================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+pytest-report.xml
+
+# ==============================
+# Apache Spark
+# ==============================
+spark-warehouse/
+metastore_db/
+derby.log
+spark-events/
+
+# ==============================
+# dbt generated files
+# ==============================
+target/
+dbt_packages/
+logs/
+
+# ==============================
+# Databricks Asset Bundles
+# ==============================
+.databricks/
+.databrickscfg
+
+# ==============================
+# Environment variables and secrets
+# ==============================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==============================
+# IDE and editor files
+# ==============================
+.vscode/
+.idea/
+*.swp
+
+# ==============================
+# Operating system files
+# ==============================
+.DS_Store
+Thumbs.db

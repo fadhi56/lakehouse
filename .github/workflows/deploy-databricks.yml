@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: databricks-deployment-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Deploy Databricks Bundle
@@ -40,21 +44,29 @@ jobs:
         id: target
         shell: bash
         run: |
-          if [[ "$GITHUB_REF_NAME" == "test" ]]; then
-            echo "TARGET=dev" >> "$GITHUB_ENV"
-            echo "Deploying TEST branch to DEV"
+          case "$GITHUB_REF_NAME" in
+            test)
+              TARGET=dev
+              ;;
+            main)
+              TARGET=prod
+              ;;
+            *)
+              echo "Unsupported branch: $GITHUB_REF_NAME"
+              exit 1
+              ;;
+          esac
 
-          elif [[ "$GITHUB_REF_NAME" == "main" ]]; then
-            echo "TARGET=prod" >> "$GITHUB_ENV"
-            echo "Deploying MAIN branch to PROD"
+          echo "TARGET=$TARGET" >> "$GITHUB_ENV"
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
 
-          else
-            echo "Unsupported branch: $GITHUB_REF_NAME"
-            exit 1
-          fi
+          echo "GitHub branch: $GITHUB_REF_NAME"
+          echo "Databricks target: $TARGET"
+          echo "Job suffix: _$TARGET"
 
       # Step 4: Check environment variables
       - name: Verify Environment Variables
+        shell: bash
         run: |
           test -n "$DATABRICKS_HOST" || {
             echo "DATABRICKS_HOST missing"
@@ -81,3 +93,13 @@ jobs:
       # Step 8: Show deployed resources
       - name: Show Deployed Resources
         run: databricks bundle summary -t "$TARGET"
+
+      # Step 9: Deployment summary
+      - name: Deployment Summary
+        run: |
+          echo "## Databricks Deployment Successful" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Property | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| GitHub Branch | $GITHUB_REF_NAME |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Bundle Target | $TARGET |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Job Suffix | _$TARGET |" >> "$GITHUB_STEP_SUMMARY"
