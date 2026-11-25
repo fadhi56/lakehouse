@@ -23,7 +23,7 @@ targets:
     default: true
 
     workspace:
-      root_path: /Workspace/Users/ssellmy4@gmail.com/.bundle/${bundle.name}/dev
+      root_path: /Workspace/Users/ssellmy4@gmail.com/.bundle/${bundle.name}/${bundle.target}
 
     variables:
       catalog: dev
@@ -35,7 +35,7 @@ targets:
     mode: production
 
     workspace:
-      root_path: /Workspace/Users/ssellmy4@gmail.com/.bundle/${bundle.name}/prod
+      root_path: /Workspace/Users/ssellmy4@gmail.com/.bundle/${bundle.name}/${bundle.target}
 
     variables:
       catalog: prod
