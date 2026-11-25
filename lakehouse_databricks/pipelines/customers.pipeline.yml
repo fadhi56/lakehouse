@@ -1,0 +1,18 @@
+resources:
+  pipelines:
+    customers_pipeline:
+      name: customers_pipeline_${bundle.target}
+
+      catalog: ${var.catalog}
+      schema: ${var.pipeline_schema}
+
+      serverless: true
+      photon: true
+      continuous: false
+      channel: CURRENT
+
+      root_path: ../src/customers
+
+      libraries:
+        - glob:
+            include: ../src/customers/transformations/**
