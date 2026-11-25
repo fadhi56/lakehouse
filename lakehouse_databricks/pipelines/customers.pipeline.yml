@@ -8,10 +8,7 @@ resources:
 
       serverless: true
       photon: true
-
       continuous: false
-      development: false
-
       channel: CURRENT
 
       root_path: ../src/customers

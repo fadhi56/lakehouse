@@ -3,7 +3,8 @@ bundle:
 
 include:
   - jobs/**/*.yml
-  - pipelines/**/*.yml
+  - jobs/*.yml
+  - pipelines/*.yml
 
 variables:
   catalog:
@@ -39,13 +40,6 @@ targets:
     sync:
       exclude:
         - tests/**
-        - .pytest_cache/**
-        - htmlcov/**
-        - .coverage
-        - .venv/**
-        - .dbt/**
-        - "**/__pycache__/**"
-        - "**/*.pyc"
         
   prod:
     mode: production
